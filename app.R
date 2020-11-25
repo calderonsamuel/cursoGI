@@ -5,15 +5,8 @@ library(readxl)
 library(DT)
 
 creds <- read_csv("data/credentials.csv")
-
-# sheets <- excel_sheets("data/matrices_ejemplo.xlsx")
-
-# matriz_ii <- read_excel("data/matrices_ejemplo.xlsx", sheet = sheets[1])
-# matriz_oest <- read_excel("data/matrices_ejemplo.xlsx", sheet = sheets[2])
-# matriz_cbc <- read_excel("data/matrices_ejemplo.xlsx", sheet = sheets[3])
-# matriz_oesp <- read_excel("data/matrices_ejemplo.xlsx", sheet = sheets[4])
-# matriz_metas <- read_excel("data/matrices_ejemplo.xlsx", sheet = sheets[5])
-
+componentes_gestion <- read_csv("data/componentes_gestion_list.csv")
+componentes_gestion_color <- read_csv("data/componentes_gestion.csv")
 
 ui <- navbarPage(
   theme = shinythemes::shinytheme("yeti"),
@@ -40,58 +33,15 @@ server <- function(input, output, session) {
   output$auth_output <- renderPrint({
     reactiveValuesToList(res_auth)
   })
-  
-  tipo_de_usuario <- reactive({
-    creds %>% 
-      filter(user == res_auth$user) %>% 
-      pull(tipo)
-  })
-
   # #auth end
   
-  matriz_ii <- reactive({
-    req(input$listado_alumnos)
-    file <- paste0("data/estudiantes_matrices/matriz_ii/", input$listado_alumnos, ".csv")
-    read_csv(file)
-  })
+  nombre_alumno <- reactive(input$listado_alumnos)
   
-  matriz_oest <- reactive({
-    req(input$listado_alumnos)
-    file <- paste0("data/estudiantes_matrices/matriz_oest/", input$listado_alumnos, ".csv")
-    read_csv(file)
-  })
+  tipo_de_usuario <- reactive(res_auth$tipo)
   
-  matriz_cbc <- reactive({
-    req(input$listado_alumnos)
-    file <- paste0("data/estudiantes_matrices/matriz_cbc/", input$listado_alumnos, ".csv")
-    read_csv(file)
-  })
-  
-  output$tabla_ii <- DT::renderDT({
-      matriz_ii()
-  }, rownames = FALSE, selection = "none")
-  
-  output$tabla_oest <- DT::renderDT({
-      matriz_oest()
-  }, rownames = FALSE, selection = "single")
-  
-  # selected_oest <- reactive({
-  #     matriz_oest %>% 
-  #         filter(row_number() == input$tabla_oest_rows_selected) %>% 
-  #         pull(`Objetivos estratégicos`)
-  # })
-  
-  output$tabla_CBC <- renderDT({
-      # data <- matriz_cbc
-      # if(length(input$tabla_oest_rows_selected)>0) {
-      #     data <- matriz_cbc %>% 
-      #         filter(`Objetivos estratégicos` == selected_oest())
-      # }
-      # data
-    
-    matriz_cbc()
-      
-  }, rownames = FALSE, selection = "none")
+  csvTableServer("matriz_ii", nombre_alumno)
+  csvTableServer("matriz_componentes", nombre_alumno)
+  csvTableServer("matriz_oest", nombre_alumno)
   
   filtered_matriz_oesp <- reactive({
     data <- matriz_oesp
@@ -134,6 +84,26 @@ server <- function(input, output, session) {
     matriz_est_ii()
   })
   
+  matriz_est_componentes <- reactive({
+    file <- paste0("data/estudiantes_matrices/matriz_ii/", res_auth$user, ".csv")
+    data <- read_csv(file)
+    data %>% 
+      # select(-c(Identidad,`Texto ingresado`)) %>%
+      mutate(`Componente` = c(paste0(input$est_componentes_1, collapse = ", "), 
+                       paste0(input$est_componentes_2, collapse = ", "), 
+                       paste0(input$est_componentes_3, collapse = ", "))
+      )
+  })
+  
+  output$tabla_est_componentes <- renderDT({
+    matriz_est_componentes() %>% 
+      select(-user) %>% 
+      separate_rows(Componente, sep = ",") %>%
+      mutate(Componente = str_squish(Componente)) %>% 
+      datatable() %>% 
+      formatStyle('Componente', color = styleEqual(componentes_gestion_color$componente, componentes_gestion_color$color))
+  })
+  
   matriz_est_oest <- reactive({
     file <- paste0("data/estudiantes_matrices/matriz_ii/", res_auth$user, ".csv")
     data <- read_csv(file)
@@ -143,21 +113,6 @@ server <- function(input, output, session) {
   
   output$tabla_est_oest <- renderDT({
     matriz_est_oest() %>% select(-user)
-  })
-  
-  matriz_est_cbc <- reactive({
-    file <- paste0("data/estudiantes_matrices/matriz_oest/", res_auth$user, ".csv")
-    data <- read_csv(file)
-    data %>% 
-      select(-c(Identidad,`Texto ingresado`)) %>%
-      mutate(`CBC` = c(paste0(input$est_cbc_1, collapse = ", "), 
-                       paste0(input$est_cbc_2, collapse = ", "), 
-                       paste0(input$est_cbc_3, collapse = ", "))
-      )
-  })
-  
-  output$tabla_est_cbc <- renderDT({
-    matriz_est_cbc() %>% select(-user)
   })
   
   observeEvent(input$est_ii_save, {
@@ -181,17 +136,17 @@ server <- function(input, output, session) {
     updateTextAreaInput(session, "est_oest_2", value = "")
     updateTextAreaInput(session, "est_oest_3", value = "")
     
-    updateTabsetPanel(session, "tabset_estudiantes_matrices", selected = "est_cbc")
+    updateTabsetPanel(session, "tabset_estudiantes_matrices", selected = "est_componentes")
   })
   
-  observeEvent(input$est_cbc_save, {
-    data <- matriz_est_cbc() 
-    file <- paste0("data/estudiantes_matrices/matriz_cbc/", res_auth$user, ".csv")
+  observeEvent(input$est_componentes_save, {
+    data <- matriz_est_componentes() 
+    file <- paste0("data/estudiantes_matrices/matriz_componentes/", res_auth$user, ".csv")
     write_csv(data, file)
     showNotification("Guardado correctamente", duration = 2, closeButton = FALSE)
-    updateSelectInput(session, "est_cbc_1", value = "")
-    updateSelectInput(session, "est_cbc_2", value = "")
-    updateSelectInput(session, "est_cbc_3", value = "")
+    updateSelectInput(session, "est_componentes_1", value = "")
+    updateSelectInput(session, "est_componentes_2", value = "")
+    updateSelectInput(session, "est_componentes_3", value = "")
   })
   
   output$ui_estudiantes <- renderUI({
@@ -215,6 +170,23 @@ server <- function(input, output, session) {
       ),
       
       tabPanel(
+        title = "Componentes",
+        value = "est_componentes",
+        sidebarLayout(
+          sidebarPanel(
+            selectInput("est_componentes_1", "¿Qué componentes de gestión se alinean con la misión institucional?", choices = componentes_gestion, multiple = TRUE),
+            selectInput("est_componentes_2", "¿Qué componentes de gestión se alinean con la visión institucional?", choices = componentes_gestion, multiple = TRUE),
+            selectInput("est_componentes_3", "¿Qué componentes de gestión se alinean con los valores institucionales??", choices = componentes_gestion, multiple = TRUE),
+            actionButton("est_componentes_save", "Guardar")
+            # TODO: guardar data de cbc
+          ),
+          mainPanel(
+            DTOutput("tabla_est_componentes")
+          )
+        )
+      ),
+      
+      tabPanel(
         title = "Objetivos estratégicos",
         value = "est_oest",
         sidebarLayout(
@@ -229,24 +201,9 @@ server <- function(input, output, session) {
             DTOutput("tabla_est_oest")
           )
         )
-      ),
-      
-      tabPanel(
-        title = "CBC",
-        value = "est_cbc",
-        sidebarLayout(
-          sidebarPanel(
-            selectInput("est_cbc_1", "¿Qué CBC se alinean con el Objetivo Estratégico 1?", choices = paste("CBC", 1:7), multiple = TRUE),
-            selectInput("est_cbc_2", "¿Qué CBC se alinean con el Objetivo Estratégico 2?", choices = paste("CBC", 1:7), multiple = TRUE),
-            selectInput("est_cbc_3", "¿Qué CBC se alinean con el Objetivo Estratégico 3?", choices = paste("CBC", 1:7), multiple = TRUE),
-            actionButton("est_cbc_save", "Guardar")
-            # TODO: guardar data de cbc
-          ),
-          mainPanel(
-            DTOutput("tabla_est_cbc")
-          )
-        )
       )
+      
+      
       
     )
   })
@@ -272,10 +229,21 @@ server <- function(input, output, session) {
             tags$h3("Aquí se muestran los datos de identidad institucional")
           ),
           mainPanel(
-            DTOutput("tabla_ii")
+            csvTableOutput("matriz_ii")
           )
         )
       ),
+      tabPanel(
+        title = "Componentes",
+        sidebarLayout(
+          sidebarPanel(
+            tags$h3("Aquí se ve el alineamiento de Identidad institucional y Componentes de Gestión")
+          ),
+          mainPanel(
+            csvTableOutput("matriz_componentes")
+          )
+        )
+      ), 
       tabPanel(
         title = "Objetivos estratégicos",
         sidebarLayout(
@@ -283,44 +251,10 @@ server <- function(input, output, session) {
             tags$h3("Aquí se ve el alineamiento de Objetivos estratégicos y datos de identidad institucional")
           ),
           mainPanel(
-            DTOutput("tabla_oest")
+            csvTableOutput("matriz_oest")
           )
         )
-      ),
-      tabPanel(
-        title = "CBC",
-        sidebarLayout(
-          sidebarPanel(
-            tags$h3("Aquí se ve el alineamiento de Objetivos estratégicos y CBC")
-          ),
-          mainPanel(
-            DTOutput("tabla_CBC")
-          )
-        )
-      ) # ,
-      
-      # tabPanel(
-      #   title = "Objetivos específicos",
-      #   sidebarLayout(
-      #     sidebarPanel(
-      #       tags$h3("Aquí se ve el alineamiento de objetivos estratégicos y objetivos específicos")
-      #     ),
-      #     mainPanel(
-      #       DTOutput("tabla_oesp")
-      #     )
-      #   )
-      # ),
-      # tabPanel(
-      #   title = "Metas",
-      #   sidebarLayout(
-      #     sidebarPanel(
-      #       tags$h3("Aquí se ven las metas según objetivos específicos")
-      #     ),
-      #     mainPanel(
-      #       DTOutput("tabla_metas")
-      #     )
-      #   )
-      # )
+      )
     )
   })
   
