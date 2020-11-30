@@ -3,9 +3,14 @@ library(tidyverse)
 library(shinymanager)
 library(readxl)
 library(DT)
+library(flextable)
 
 creds <- read_csv("data/credentials.csv")
-componentes_gestion <- read_csv("data/componentes_gestion_list.csv")
+
+componentes_gestion <- read_csv("data/componentes_gestion_list.csv") %>% 
+  as.list() %>% 
+  map(~.x[!is.na(.x)])
+
 componentes_gestion_color <- read_csv("data/componentes_gestion.csv")
 
 ui <- navbarPage(
@@ -36,6 +41,8 @@ server <- function(input, output, session) {
   # #auth end
   
   nombre_alumno <- reactive(input$listado_alumnos)
+  
+  nombre_usuario <- reactive(res_auth$user)
   
   tipo_de_usuario <- reactive(res_auth$tipo)
   
@@ -84,25 +91,8 @@ server <- function(input, output, session) {
     matriz_est_ii()
   })
   
-  matriz_est_componentes <- reactive({
-    file <- paste0("data/estudiantes_matrices/matriz_ii/", res_auth$user, ".csv")
-    data <- read_csv(file)
-    data %>% 
-      # select(-c(Identidad,`Texto ingresado`)) %>%
-      mutate(`Componente` = c(paste0(input$est_componentes_1, collapse = ", "), 
-                       paste0(input$est_componentes_2, collapse = ", "), 
-                       paste0(input$est_componentes_3, collapse = ", "))
-      )
-  })
-  
-  output$tabla_est_componentes <- renderDT({
-    matriz_est_componentes() %>% 
-      select(-user) %>% 
-      separate_rows(Componente, sep = ",") %>%
-      mutate(Componente = str_squish(Componente)) %>% 
-      datatable() %>% 
-      formatStyle('Componente', color = styleEqual(componentes_gestion_color$componente, componentes_gestion_color$color))
-  })
+  matriz_est_componentes <- matriz_est_componentesServer("matriz_est_componentes", nombre_usuario)
+  tabla_est_componentesServer("tabla_est_componentes", matriz_est_componentes, componentes_gestion_color)
   
   matriz_est_oest <- reactive({
     file <- paste0("data/estudiantes_matrices/matriz_ii/", res_auth$user, ".csv")
@@ -144,9 +134,9 @@ server <- function(input, output, session) {
     file <- paste0("data/estudiantes_matrices/matriz_componentes/", res_auth$user, ".csv")
     write_csv(data, file)
     showNotification("Guardado correctamente", duration = 2, closeButton = FALSE)
-    updateSelectInput(session, "est_componentes_1", value = "")
-    updateSelectInput(session, "est_componentes_2", value = "")
-    updateSelectInput(session, "est_componentes_3", value = "")
+    # updateSelectInput(session, "est_componentes_1", value = "")
+    # updateSelectInput(session, "est_componentes_2", value = "")
+    # updateSelectInput(session, "est_componentes_3", value = "")
   })
   
   output$ui_estudiantes <- renderUI({
@@ -174,14 +164,16 @@ server <- function(input, output, session) {
         value = "est_componentes",
         sidebarLayout(
           sidebarPanel(
-            selectInput("est_componentes_1", "¿Qué componentes de gestión se alinean con la misión institucional?", choices = componentes_gestion, multiple = TRUE),
-            selectInput("est_componentes_2", "¿Qué componentes de gestión se alinean con la visión institucional?", choices = componentes_gestion, multiple = TRUE),
-            selectInput("est_componentes_3", "¿Qué componentes de gestión se alinean con los valores institucionales??", choices = componentes_gestion, multiple = TRUE),
+            matriz_est_componentesInput("matriz_est_componentes", componentes_gestion),
+            # selectInput("est_componentes_1", "¿Qué componentes de gestión se alinean con la misión institucional?", choices = componentes_gestion, multiple = TRUE),
+            # selectInput("est_componentes_2", "¿Qué componentes de gestión se alinean con la visión institucional?", choices = componentes_gestion, multiple = TRUE),
+            # selectInput("est_componentes_3", "¿Qué componentes de gestión se alinean con los valores institucionales??", choices = componentes_gestion, multiple = TRUE),
             actionButton("est_componentes_save", "Guardar")
             # TODO: guardar data de cbc
           ),
           mainPanel(
-            DTOutput("tabla_est_componentes")
+            tabla_est_componentesOutput("tabla_est_componentes")
+            # DTOutput("tabla_est_componentes")
           )
         )
       ),
@@ -248,14 +240,40 @@ server <- function(input, output, session) {
         title = "Objetivos estratégicos",
         sidebarLayout(
           sidebarPanel(
-            tags$h3("Aquí se ve el alineamiento de Objetivos estratégicos y datos de identidad institucional")
+            checkboxGroupInput(
+              inputId = "evaluacion_oest", 
+              label = "Los objetivos estratégicos del PEI presentan",
+              choices = c("Alineamiento con misión",
+                          "Alineamiento con visión",
+                          "Alineamiento con valores institucionales",
+                          "Alineamiento con componentes de gestión")),
+            textInput(
+              inputId = "feedback",
+              label = "Retroalimentación",
+              placeholder = "Ingrese retroalimentación"
+            )
           ),
           mainPanel(
-            csvTableOutput("matriz_oest")
+            csvTableOutput("matriz_oest"),
+            tags$br(),
+            textOutput("evaluacion_oest_texto")
           )
         )
       )
     )
+  })
+  
+  output$evaluacion_oest_texto <- renderText({
+    cumplidos <- length(input$evaluacion_oest)
+    calificacion <- case_when(
+      cumplidos == 0 ~ "Malo",
+      cumplidos == 1 ~ "Deficiente",
+      cumplidos == 2 ~ "Regular",
+      cumplidos == 3 ~ "Bueno",
+      cumplidos == 4 ~ "Excelente",
+      TRUE ~ ""
+    )
+    paste("El alumno cumplió con", cumplidos, "condiciones, por eso su nota es", calificacion)
   })
   
 }

@@ -23,7 +23,7 @@ matriz_est_componentesInput <- function(id, choices){
 tabla_est_componentesOutput <- function(id){
   ns <- NS(id)
   tagList(
-    DTOutput(ns("tabla"))
+      uiOutput(ns("tabla"))
   )
 }
 
@@ -41,33 +41,52 @@ matriz_est_componentesServer <- function(id, alumn_id){
   })
 }
 
-tabla_est_componentesServer <- function(id, matriz){
+tabla_est_componentesServer <- function(id, matriz, color_table){
   moduleServer(id, function(input, output, session){
-    output$tabla <- renderDT({
+    output$tabla <- renderUI({
       matriz() %>% 
         select(-user) %>%
         separate_rows(Componente, sep = ",") %>%
-        # mutate(Componente = str_squish(Componente)) %>%
-        datatable() %>%
-        formatStyle('Componente', color = styleEqual(color_table$componente, color_table$color))
+        flextable() %>% 
+        theme_vanilla() %>% 
+        merge_v(j = c("Identidad", "Texto ingresado")) %>% 
+        autofit() %>% 
+        fontsize(size = 15, part = "body") %>%
+        fontsize(size = 16, part = "header") %>% 
+        bold(part = "header") %>% 
+        color(color = "white", part = "header") %>% 
+        bg(bg = "gray20", part = "header") %>% 
+        color(j = "Componente", color = scales::col_factor(color_table$color2, levels = color_table$componente)) %>% 
+        bg(j = "Componente", bg = scales::col_factor(color_table$bg, levels = color_table$componente)) %>% 
+        htmltools_value()
+        
     })
   })
 }
 
 matriz_est_componentesApp <- function(){
-  choices <- read_csv("data/componentes_gestion_list.csv")
+  choices <- read_csv("data/componentes_gestion_list.csv") %>% as.list() %>% map(~.x[!is.na(.x)])
   color_table <- read_csv("data/componentes_gestion.csv")
   
   ui <- fluidPage(
-    matriz_est_componentesUI("my_id", choices),
-    tabla_est_componentesOutput("my_table_id")
+    sidebarLayout(
+      sidebarPanel(
+        matriz_est_componentesInput("my_id", choices)
+      ),
+      mainPanel(
+        tabla_est_componentesOutput("my_table_id")
+      )
+    )
   )
   server <- function(input, output, session) {
     alumn_id <- reactive("alumno1")
     matriz <- matriz_est_componentesServer("my_id", alumn_id)
-    tabla_est_componentesServer("my_table_id", matriz)
+    tabla_est_componentesServer("my_table_id", matriz, color_table)
   }
   shinyApp(ui, server)  
 }
 
-matriz_est_componentesApp()
+# library(shiny)
+# library(tidyverse)
+# library(flextable)
+# matriz_est_componentesApp()

@@ -1,7 +1,7 @@
 csvTableOutput <- function(id){
   ns <- NS(id)
   tagList(
-    gt::gt_output(ns("tabla"))
+    uiOutput(ns("tabla"))
     # DT::DTOutput(ns("tabla"))
   )
 }
@@ -14,12 +14,14 @@ csvTableServer <- function(id, alumn_id){
       read_csv(file)
     })
     
-    output$tabla <- gt::render_gt({
+    output$tabla <- renderUI({
     # output$tabla <- DT::renderDT({
       matriz() %>% 
         select(-user) %>% 
         # mutate(groupname=Identidad) %>% 
-        gt()
+        flextable() %>% 
+        autofit() %>% 
+        htmltools_value()
         # tab_row_group(group = "Mision", rows = 1, others = "Otros")
     # }, rownames = FALSE, selection = "none")
     })
@@ -37,5 +39,5 @@ csvTableApp <- function(){
   shinyApp(ui, server)  
 }
 
-csvTableApp()
+# csvTableApp()
 
