@@ -1,0 +1,17 @@
+tipo_gestion,componente,color1,color2,bg,ejemplo,rgb_color,rgb_bg,hex_color,hex_bg,rgb_color,rgb_bg
+Gestión institucional,Dirección estratégica,#0000CC,red,palegreen2,Dirección estratégica,255 0 0,144 238 144,#0000ee,#dde8cb,0 0 238,221 232 203
+Gestión institucional,Organización,#CC0000,maroon4,palegreen2,Organización,139 28 98,144 238 144,#6a1b9a,#dde8cb,106 27 154,221 232 203
+Gestión institucional,Mejora continua,#006600,black,palegreen2,Mejora continua,0 0 0,144 238 144,#000000,#dde8cb,0 0 0,221 232 203
+Gestión institucional,Transparencia,#D05400,navyblue,palegreen2,Transparencia,0 0 128,144 238 144,#c9211e,#dde8cb,201 33 30,221 232 203
+Gestión académica y programas de estudios,Servicios académicos a estudiantes,#C00000,red,lightskyblue1,Servicios académicos a estudiantes,255 0 0,176 226 255,#0000ee,#dedce6,0 0 238,222 220 230
+Gestión académica y programas de estudios,Atracción de estudiantes,#7030A0,maroon4,lightskyblue1,Atracción de estudiantes,139 28 98,176 226 255,#6a1b9a,#dedce6,106 27 154,222 220 230
+Gestión académica y programas de estudios,Seguimiento a egresados,#FF0000,black,lightskyblue1,Seguimiento a egresados,0 0 0,176 226 255,#000000,#dedce6,0 0 0,222 220 230
+Gestión académica y programas de estudios,Formación académica,#002060,green4,lightskyblue1,Formación académica,0 139 0,176 226 255,#c9211e,#dedce6,201 33 30,222 220 230
+Gestión académica y programas de estudios,Práctica pre profesional,#00B050,skyblue4,lightskyblue1,Práctica pre profesional,74 112 139,176 226 255,#00897b,#dedce6,0 137 123,222 220 230
+Gestión académica y programas de estudios,Investigación,#00B0F0,plum3,lightskyblue1,Investigación,205 150 205,176 226 255,#024c02,#dedce6,2 76 2,222 220 230
+Gestión académica y programas de estudios,Orientación y tutoría,#385623,slategrey,lightskyblue1,Orientación y tutoría,112 128 144,176 226 255,#5d4037,#dedce6,93 64 55,222 220 230
+Gestión académica y programas de estudios,Promoción del bienestar,#0070C0,tan3,lightskyblue1,Promoción del bienestar,205 133 63,176 226 255,#ef6c00,#dedce6,239 108 0,222 220 230
+Gestión académica y programas de estudios,Desarrollo profesional de los docentes,#C45911,turquoise4,lightskyblue1,Desarrollo profesional de los docentes,0 134 139,176 226 255,#ec407a,#dedce6,236 64 122,222 220 230
+"Infraestructura física, equipamiento y recursos para el aprendizaje. Componentes:",Infraestructura y servicios básicos,#663300,red,khaki,Infraestructura y servicios básicos,255 0 0,240 230 140,#0000ee,#ffdbb6,0 0 238,255 219 182
+"Infraestructura física, equipamiento y recursos para el aprendizaje. Componentes:",Ambientes,#000066,maroon4,khaki,Ambientes,139 28 98,240 230 140,#6a1b9a,#ffdbb6,106 27 154,255 219 182
+"Infraestructura física, equipamiento y recursos para el aprendizaje. Componentes:",Mantenimiento,#003300,black,khaki,Mantenimiento,0 0 0,240 230 140,#000000,#ffdbb6,0 0 0,255 219 182

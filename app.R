@@ -13,6 +13,8 @@ componentes_gestion <- read_csv("data/componentes_gestion_list.csv") %>%
 
 componentes_gestion_color <- read_csv("data/componentes_gestion.csv")
 
+data_oest_componentes <- reactive(read_csv("data/oest_componentes.csv"))
+
 ui <- navbarPage(
   theme = shinythemes::shinytheme("yeti"),
   title = "Curso de Gestión Institucional",
@@ -23,6 +25,12 @@ ui <- navbarPage(
   tabPanel(
     title = "Guías",
     uiOutput("ui_guias")
+  ),
+  navbarMenu(
+    title = "Módulos",
+    tabPanel("Módulo I"),
+    tabPanel("Módulo II"),
+    tabPanel("Módulo III")
   )
 )
 
@@ -48,7 +56,8 @@ server <- function(input, output, session) {
   
   csvTableServer("matriz_ii", nombre_alumno)
   csvTableServer("matriz_componentes", nombre_alumno)
-  csvTableServer("matriz_oest", nombre_alumno)
+  # csvTableServer("matriz_oest", nombre_alumno)
+  oest_componentesServer("oest_componentes", data_oest_componentes,componentes_gestion_color)
   
   filtered_matriz_oesp <- reactive({
     data <- matriz_oesp
@@ -254,9 +263,30 @@ server <- function(input, output, session) {
             )
           ),
           mainPanel(
-            csvTableOutput("matriz_oest"),
+            oest_componentesUI("oest_componentes"),
+            # csvTableOutput("matriz_oest"),
             tags$br(),
             textOutput("evaluacion_oest_texto")
+          )
+        )
+      ),
+      
+      tabPanel(
+        title = "Monitoreo PEI",
+        sidebarLayout(
+          sidebarPanel(
+            checkboxGroupInput(
+              inputId = "monitoreo_pei",
+              label = "El monitoreo del PEI presenta",
+              choices = c("Construcción a partir de los objetivos específicos.",
+                          "Estado de avance en el cumplimiento de metas anuales.",
+                          "Descripción del estado de avance.",
+                          "Acciones para implementar a partir del avance.")
+            )
+          ),
+          mainPanel(
+            matriz_monitoreo_peiUI("matriz_monitoreo_pei"),
+            textOutput("evaluacion_monitoreo_pei")
           )
         )
       )
@@ -275,6 +305,21 @@ server <- function(input, output, session) {
     )
     paste("El alumno cumplió con", cumplidos, "condiciones, por eso su nota es", calificacion)
   })
+  
+  output$evaluacion_monitoreo_pei <- renderText({
+    cumplidos <- length(input$monitoreo_pei)
+    calificacion <- case_when(
+      cumplidos == 0 ~ "Malo",
+      cumplidos == 1 ~ "Deficiente",
+      cumplidos == 2 ~ "Regular",
+      cumplidos == 3 ~ "Bueno",
+      cumplidos == 4 ~ "Excelente",
+      TRUE ~ ""
+    )
+    paste("El alumno cumplió con", cumplidos, "condiciones, por eso su nota es", calificacion)
+  })
+  
+  matriz_monitoreo_peiServer("matriz_monitoreo_pei", componentes_gestion_color)
   
 }
 

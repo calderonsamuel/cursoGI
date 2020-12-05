@@ -15,15 +15,11 @@ csvTableServer <- function(id, alumn_id){
     })
     
     output$tabla <- renderUI({
-    # output$tabla <- DT::renderDT({
       matriz() %>% 
         select(-user) %>% 
-        # mutate(groupname=Identidad) %>% 
         flextable() %>% 
         autofit() %>% 
         htmltools_value()
-        # tab_row_group(group = "Mision", rows = 1, others = "Otros")
-    # }, rownames = FALSE, selection = "none")
     })
   })
 }
