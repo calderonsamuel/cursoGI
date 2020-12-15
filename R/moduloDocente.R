@@ -3,7 +3,9 @@ moduloDocenteUI <- function(id) {
   tagList(
     navlistPanel(
       "Modulo I: Proyecto Educativo Institucional",
-      tabPanel("Evaluación de Foro 1"),
+      tabPanel("Evaluación de Foro 1",
+               tags$h3("Evaluación del Foro 1"),
+               tags$p("A continuación se te presenta la evaluación de la participación en el Foro 1. Toma en cuenta la rúbrica.")),
       tabPanel("Evaluación de Tarea 1"),
       "Modulo II: Manual de Perfil de Puesto",
       tabPanel("Evaluación de Foro 2"),
@@ -32,4 +34,4 @@ moduloDocenteApp <- function(){
   shinyApp(ui, server)
 }
 
-moduloDocenteApp()
+# moduloDocenteApp()

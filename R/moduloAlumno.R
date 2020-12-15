@@ -3,7 +3,8 @@ moduloAlumnoUI <- function(id) {
   tagList(
     navlistPanel(
       "Inicio",
-      tabPanel("Evaluación de entrada"),
+      tabPanel("Evaluación de entrada",
+               tags$h3("¡Bienvenido a la evaluación de entrada!")),
       "Modulo I: Proyecto Educativo Institucional",
       tabPanel("Video 1: Evaluación del PEI"),
       tabPanel("Foro 1: Alineamiento y cumplimiento del PEI en la actualidad"),
@@ -40,4 +41,4 @@ moduloAlumnoApp <- function(){
   shinyApp(ui, server)
 }
 
-moduloAlumnoApp()
+# moduloAlumnoApp()

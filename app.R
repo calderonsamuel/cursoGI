@@ -11,7 +11,8 @@ componentes_gestion <- read_csv("data/componentes_gestion_list.csv") %>%
   as.list() %>% 
   map(~.x[!is.na(.x)])
 
-componentes_gestion_color <- read_csv("data/componentes_gestion.csv")
+# componentes_gestion_color <- read_csv("data/componentes_gestion.csv")
+componentes_gestion_color <- read_excel("data/color_table.xlsx")
 
 data_oest_componentes <- reactive(read_csv("data/oest_componentes.csv"))
 
