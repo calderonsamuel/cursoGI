@@ -1,6 +1,7 @@
 library(shiny)
 library(tidyverse)
 library(shinymanager)
+library(flextable)
 
 creds <- read_csv("data/credentials.csv")
 tipo_usuario <- "alumno"
@@ -9,12 +10,18 @@ ui <- fluidPage(
   navbarPage(
     title = "Curso de Gestión Institucional",
     theme = shinythemes::shinytheme("yeti"),
-    tabPanel("Inicio"),
+    tabPanel(
+      title = "Inicio",
+      bienvenidaUI("bienvenida")
+    ),
     tabPanel(
       title = "Curso",
       uiOutput("moduloCurso")
     ),
-    tabPanel("Calendario")
+    tabPanel(
+      title = "Cronograma",
+      cronogramaUI("cronograma")
+    )
   )
 )
 
@@ -35,10 +42,12 @@ server <- function(input, output) {
   tipo_de_usuario <- reactive(res_auth$tipo)
   nombre_usuario <- reactive(res_auth$user)
   
+  bienvenidaServer("bienvenida")
+  
   output$moduloCurso <- renderUI(moduloCursoUI("moduloCurso"))
   moduloCursoServer("moduloCurso", tipo_de_usuario)
   
-  
+  cronogramaServer("cronograma")
 }
 
 # Run the application 

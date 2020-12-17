@@ -2,6 +2,7 @@ moduloAlumnoUI <- function(id) {
   ns <- NS(id)
   tagList(
     navlistPanel(
+      widths = c(3, 9),
       "Inicio",
       tabPanel(
         title = "Evaluación de entrada",
@@ -17,8 +18,23 @@ moduloAlumnoUI <- function(id) {
         title = "Foro 1: Alineamiento y cumplimiento del PEI en la actualidad"
         ),
       tabPanel(
-        title = "Tarea 1: Alineamiento de los componentes del PEI"
-        ),
+        title = "Tarea 1: Alineamiento de los componentes del PEI",
+        tabsetPanel(
+          tabPanel(
+            title = "Alineamiento estratégico",
+            aliEstrategicoUI("aliestrategico")
+          ),
+          tabPanel(
+            title = "Alineamiento específico"
+          ),
+          tabPanel(
+            title = "Monitoreo del PEI"
+          ),
+          tabPanel(
+            title = "Evaluación del PEI"
+          )
+        )
+      ),
       
       "Modulo II: Manual de Perfil de Puesto",
       tabPanel(
@@ -29,7 +45,18 @@ moduloAlumnoUI <- function(id) {
         title = "Foro 2: Alineamiento y cumplimiento de perfiles"
         ),
       tabPanel(
-        title = "Tarea 2: Alineamiento de los componentes del MPP"
+        title = "Tarea 2: Alineamiento de los componentes del MPP",
+        tabsetPanel(
+          tabPanel(
+            title = "Alineamiento con RI"
+          ),
+          tabPanel(
+            title = "Monitoreo del MPP"
+          ),
+          tabPanel(
+            title = "Evaluación del MPP"
+          )
+        )
         ),
       
       "Modulo III: Plan Anual de Trabajo",
@@ -41,11 +68,39 @@ moduloAlumnoUI <- function(id) {
         title = "Foro 3: Importancia de la evaluación operativa para el éxito de la gestión institucional"
         ),
       tabPanel(
-        title = "Tarea 3: Evaluación y monitoreo del PAT en coherencia con evaluación del PEI y MPP"
-        ),
+        title = "Tarea 3: Evaluación y monitoreo del PAT en coherencia con evaluación del PEI y MPP",
+        tabsetPanel(
+          tabPanel(
+            title = "Alineamiento de act."
+          ),
+          tabPanel(
+            title = "Ejecución y acompañamiento de act."
+          ),
+          tabPanel(
+            title = "Formulación de indicadores"
+          ),
+          tabPanel(
+            title = "Evaluación del PAT"
+          )
+        )
+      ),
       tabPanel(
-        title = "Tarea 4: Matrices de alineamiento del PAT 2021"
-        ),
+        title = "Tarea 4: Matrices de alineamiento del PAT 2021",
+        tabsetPanel(
+          tabPanel(
+            title = "Alineamiento de act."
+          ),
+          tabPanel(
+            title = "Ejecución y acompañamiento de act."
+          ),
+          tabPanel(
+            title = "Formulación de indicadores"
+          ),
+          tabPanel(
+            title = "Evaluación del PAT"
+          )
+        )
+      ),
       
       "Cierre",
       tabPanel(
@@ -63,6 +118,7 @@ moduloAlumnoServer <- function(id) {
     video1Server("video1")
     video2Server("video2")
     video3Server("video3")
+    aliEstrategicoServer("aliestrategico")
   })
 }
 
