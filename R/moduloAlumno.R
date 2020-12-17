@@ -3,31 +3,66 @@ moduloAlumnoUI <- function(id) {
   tagList(
     navlistPanel(
       "Inicio",
-      tabPanel("Evaluación de entrada",
-               tags$h3("¡Bienvenido a la evaluación de entrada!")),
+      tabPanel(
+        title = "Evaluación de entrada",
+        tags$h3("¡Bienvenido a la evaluación de entrada!")
+        ),
+      
       "Modulo I: Proyecto Educativo Institucional",
-      tabPanel("Video 1: Evaluación del PEI"),
-      tabPanel("Foro 1: Alineamiento y cumplimiento del PEI en la actualidad"),
-      tabPanel("Tarea 1: Alineamiento de los componentes del PEI"),
+      tabPanel(
+        title = "Video 1: Evaluación del PEI",
+        video1UI("video1")
+        ),
+      tabPanel(
+        title = "Foro 1: Alineamiento y cumplimiento del PEI en la actualidad"
+        ),
+      tabPanel(
+        title = "Tarea 1: Alineamiento de los componentes del PEI"
+        ),
+      
       "Modulo II: Manual de Perfil de Puesto",
-      tabPanel("Video 2: Evaluación del MPP"),
-      tabPanel("Foro 2: Alineamiento y cumplimiento de perfiles"),
-      tabPanel("Tarea 2: Alineamiento de los componentes del MPP"),
+      tabPanel(
+        title = "Video 2: Evaluación del MPP",
+        video2UI("video2")
+        ),
+      tabPanel(
+        title = "Foro 2: Alineamiento y cumplimiento de perfiles"
+        ),
+      tabPanel(
+        title = "Tarea 2: Alineamiento de los componentes del MPP"
+        ),
+      
       "Modulo III: Plan Anual de Trabajo",
-      tabPanel("Video 3: Evaluación del PAT alineado"),
-      tabPanel("Foro 3: Importancia de la evaluación operativa para el éxito de la gestión institucional"),
-      tabPanel("Tarea 3: Evaluación y monitoreo del PAT en coherencia con evaluación del PEI y MPP"),
-      tabPanel("Tarea 4: Matrices de alineamiento del PAT 2021"),
+      tabPanel(
+        title = "Video 3: Evaluación del PAT alineado",
+        video3UI("video3")
+        ),
+      tabPanel(
+        title = "Foro 3: Importancia de la evaluación operativa para el éxito de la gestión institucional"
+        ),
+      tabPanel(
+        title = "Tarea 3: Evaluación y monitoreo del PAT en coherencia con evaluación del PEI y MPP"
+        ),
+      tabPanel(
+        title = "Tarea 4: Matrices de alineamiento del PAT 2021"
+        ),
+      
       "Cierre",
-      tabPanel("Evaluación de salida"),
-      tabPanel("Encuesta de satisfacción")
-    )
+      tabPanel(
+        title = "Evaluación de salida"
+        ),
+      tabPanel(
+        title = "Encuesta de satisfacción"
+        )
+      )
     )
 }
 
 moduloAlumnoServer <- function(id) {
   moduleServer(id, function(input, output, session) {
-    
+    video1Server("video1")
+    video2Server("video2")
+    video3Server("video3")
   })
 }
 

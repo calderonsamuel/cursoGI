@@ -33,6 +33,7 @@ server <- function(input, output) {
   # #auth end
   
   tipo_de_usuario <- reactive(res_auth$tipo)
+  nombre_usuario <- reactive(res_auth$user)
   
   output$moduloCurso <- renderUI(moduloCursoUI("moduloCurso"))
   moduloCursoServer("moduloCurso", tipo_de_usuario)

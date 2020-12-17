@@ -4,16 +4,6 @@ moduloCursoUI <- function(id) {
   tagList(
     uiOutput(ns("ui"))
   )
-  
-  # if(tipo_usuario == "alumno"){
-  #   tagList(
-  #     moduloAlumnoUI(ns(id))
-  #   )
-  # } else if (tipo_usuario == "docente") {
-  #   tagList(
-  #     moduloDocenteUI(ns(id))
-  #   )
-  # }
 }
 
 moduloCursoServer <- function(id, tipo_usuario) {
