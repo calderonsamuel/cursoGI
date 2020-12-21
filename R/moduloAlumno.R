@@ -22,7 +22,7 @@ moduloAlumnoUI <- function(id) {
         tabsetPanel(
           tabPanel(
             title = "Alineamiento estratégico",
-            aliEstrategicoUI("aliestrategico")
+            aliEstrategicoUI(ns("aliestrategico"))
           ),
           tabPanel(
             title = "Alineamiento específico"
@@ -57,7 +57,7 @@ moduloAlumnoUI <- function(id) {
             title = "Evaluación del MPP"
           )
         )
-        ),
+      ),
       
       "Modulo III: Plan Anual de Trabajo",
       tabPanel(

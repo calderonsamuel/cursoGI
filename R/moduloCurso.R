@@ -8,37 +8,36 @@ moduloCursoUI <- function(id) {
 
 moduloCursoServer <- function(id, tipo_usuario) {
   moduleServer(id, function(input, output, session) {
-    
+    # moduloAlumnoServer("moduloAlumno")
     output$ui <- renderUI({
+      ns <- session$ns
       if(tipo_usuario() == "alumno"){
-          moduloAlumnoUI(id)
+          moduloAlumnoUI(ns("moduloAlumno"))
       } else if (tipo_usuario() == "docente") {
-          moduloDocenteUI(id)
-      }
-    })
-    reactive({
-      if(tipo_usuario() == "alumno") {
-        moduloAlumnoServer(id)
-      } else if (tipo_usuario() == "docente") {
-        moduloDocenteServer(id)
+          moduloDocenteUI(ns("moduloDocente"))
       }
     })
     
+    observeEvent(tipo_usuario() == "alumno",{
+      moduloAlumnoServer("moduloAlumno")
+    })
+    
+    observeEvent(tipo_usuario() == "docente",{
+      moduloDocenteServer("moduloDocente")
+    })
   })
 }
 
 moduloCursoApp <- function(){
   ui <- fluidPage(
-    # uiOutput("test")
     moduloCursoUI("myTestId")
   )
   server <- function(input, output, session) {
     tipo_usuario <- reactive("alumno")
-    # output$test <- renderUI(moduloCursoUI("myTestId", tipo_usuario))
     
     moduloCursoServer("myTestId", tipo_usuario)
   }
   shinyApp(ui, server)
 }
 
-# moduloCursoApp()
+moduloCursoApp()

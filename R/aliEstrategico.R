@@ -82,6 +82,7 @@ aliEstrategicoUI <- function(id) {
       ),
       mainPanel(
         uiOutput(ns("tabla"))
+        # dataTableOutput(ns("tabla"))
       )
     )
   )
@@ -131,10 +132,10 @@ aliEstrategicoServer <- function(id){
     output$tabla <- renderUI({
       # validate(need(nrow(data()) != 0,"Ingresar texto en Misión, Visión o Valores"))
       data() %>% 
-        flextable() %>% 
-        autofit() %>% 
-        merge_v("Categoría") %>% 
-        theme_vanilla() %>% 
+        flextable() %>%
+        autofit() %>%
+        merge_v("Categoría") %>%
+        theme_vanilla() %>%
         htmltools_value()
     })
   })
