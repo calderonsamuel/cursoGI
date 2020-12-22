@@ -2,7 +2,7 @@ moduloAlumnoUI <- function(id) {
   ns <- NS(id)
   tagList(
     navlistPanel(
-      widths = c(3, 9),
+      widths = c(2, 10),
       "Inicio",
       tabPanel(
         title = "Evaluación de entrada",
@@ -19,7 +19,7 @@ moduloAlumnoUI <- function(id) {
         ),
       tabPanel(
         title = "Tarea 1: Alineamiento de los componentes del PEI",
-        tabsetPanel(
+        tabsetPanel(type = "pills",
           tabPanel(
             title = "Alineamiento estratégico",
             aliEstrategicoUI(ns("aliestrategico"))
@@ -46,7 +46,7 @@ moduloAlumnoUI <- function(id) {
         ),
       tabPanel(
         title = "Tarea 2: Alineamiento de los componentes del MPP",
-        tabsetPanel(
+        tabsetPanel(type = "pills",
           tabPanel(
             title = "Alineamiento con RI"
           ),

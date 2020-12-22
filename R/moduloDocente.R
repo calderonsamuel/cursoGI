@@ -11,31 +11,31 @@ moduloDocenteUI <- function(id) {
       ),
       tabPanel(
         title = "Evaluación de Tarea 1",
-        evalTarea1UI("evaltarea1")
+        evalTarea1UI(ns("evaltarea1"))
       ),
       "Modulo II: Manual de Perfil de Puesto",
       tabPanel("Evaluación de Foro 2"),
       tabPanel(
         title = "Evaluación de Tarea 2",
-        evalTarea2UI("evaltarea2")
+        evalTarea2UI(ns("evaltarea2"))
       ),
       "Modulo III: Plan Anual de Trabajo",
       tabPanel("Evaluación de Foro 3"),
       tabPanel(
         title = "Evaluación de Tarea 3",
-        evalTarea3UI("evaltarea3")
+        evalTarea3UI(ns("evaltarea3"))
       ),
       tabPanel(
         title = "Evaluación de Tarea 4",
-        evalTarea4UI("evaltarea4")
+        evalTarea4UI(ns("evaltarea4"))
       )
     )
   )
 }
 
-moduloDocenteServer <- function(id) {
+moduloDocenteServer <- function(id, choices_alumnos) {
   moduleServer(id, function(input, output, session) {
-    evalTarea1Server("evaltarea1")
+    evalTarea1Server("evaltarea1", choices_alumnos)
     evalTarea2Server("evaltarea2")
     evalTarea3Server("evaltarea3")
     evalTarea4Server("evaltarea4")
@@ -47,7 +47,8 @@ moduloDocenteApp <- function(){
     moduloDocenteUI("myTestId")
   )
   server <- function(input, output, session) {
-    moduloDocenteServer("myTestId")
+    choices_alumnos <- reactive(c("alumno1", "alumno2", "alumno3", "alumno4", "alumno5"))
+    moduloDocenteServer("myTestId", choices_alumnos)
   }
   shinyApp(ui, server)
 }

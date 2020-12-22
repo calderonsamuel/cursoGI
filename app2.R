@@ -4,7 +4,6 @@ library(shinymanager)
 library(flextable)
 
 creds <- read_csv("data/credentials.csv")
-tipo_usuario <- "alumno"
 
 ui <- fluidPage(
   navbarPage(
@@ -41,11 +40,16 @@ server <- function(input, output) {
   
   tipo_de_usuario <- reactive(res_auth$tipo)
   nombre_usuario <- reactive(res_auth$user)
+  choices_alumnos <- reactive({
+    if(tipo_de_usuario() == "docente") {
+      creds %>% filter(docente_encargado == nombre_usuario()) %>% pull(user)
+    } else "alumno1"
+  })
   
   bienvenidaServer("bienvenida")
   
   output$moduloCurso <- renderUI(moduloCursoUI("moduloCurso"))
-  moduloCursoServer("moduloCurso", tipo_de_usuario)
+  moduloCursoServer("moduloCurso", tipo_de_usuario, choices_alumnos)
   
   cronogramaServer("cronograma")
 }

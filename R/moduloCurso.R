@@ -6,9 +6,8 @@ moduloCursoUI <- function(id) {
   )
 }
 
-moduloCursoServer <- function(id, tipo_usuario) {
+moduloCursoServer <- function(id, tipo_usuario, choices_alumnos) {
   moduleServer(id, function(input, output, session) {
-    # moduloAlumnoServer("moduloAlumno")
     output$ui <- renderUI({
       ns <- session$ns
       if(tipo_usuario() == "alumno"){
@@ -23,7 +22,7 @@ moduloCursoServer <- function(id, tipo_usuario) {
     })
     
     observeEvent(tipo_usuario() == "docente",{
-      moduloDocenteServer("moduloDocente")
+      moduloDocenteServer("moduloDocente", choices_alumnos)
     })
   })
 }
@@ -33,11 +32,11 @@ moduloCursoApp <- function(){
     moduloCursoUI("myTestId")
   )
   server <- function(input, output, session) {
-    tipo_usuario <- reactive("alumno")
-    
-    moduloCursoServer("myTestId", tipo_usuario)
+    tipo_usuario <- reactive("docente")
+    choices_alumnos <- reactive(c("alumno1", "alumno2", "alumno3", "alumno4", "alumno5"))
+    moduloCursoServer("myTestId", tipo_usuario, choices_alumnos)
   }
   shinyApp(ui, server)
 }
 
-moduloCursoApp()
+# moduloCursoApp()
