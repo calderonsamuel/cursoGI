@@ -6,7 +6,7 @@ moduloCursoUI <- function(id) {
   )
 }
 
-moduloCursoServer <- function(id, tipo_usuario, choices_alumnos) {
+moduloCursoServer <- function(id, tipo_usuario, choices_alumnos, nombre_usuario) {
   moduleServer(id, function(input, output, session) {
     output$ui <- renderUI({
       ns <- session$ns
@@ -18,7 +18,7 @@ moduloCursoServer <- function(id, tipo_usuario, choices_alumnos) {
     })
     
     observeEvent(tipo_usuario() == "alumno",{
-      moduloAlumnoServer("moduloAlumno")
+      moduloAlumnoServer("moduloAlumno", nombre_usuario)
     })
     
     observeEvent(tipo_usuario() == "docente",{
@@ -29,12 +29,14 @@ moduloCursoServer <- function(id, tipo_usuario, choices_alumnos) {
 
 moduloCursoApp <- function(){
   ui <- fluidPage(
+    theme = bs_theme(version = 3, bootswatch = "flatly"),
     moduloCursoUI("myTestId")
   )
   server <- function(input, output, session) {
     tipo_usuario <- reactive("docente")
     choices_alumnos <- reactive(c("alumno1", "alumno2", "alumno3", "alumno4", "alumno5"))
-    moduloCursoServer("myTestId", tipo_usuario, choices_alumnos)
+    nombre_usuario <- reactive("docente1")
+    moduloCursoServer("myTestId", tipo_usuario, choices_alumnos, nombre_usuario)
   }
   shinyApp(ui, server)
 }

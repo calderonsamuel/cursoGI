@@ -41,6 +41,7 @@ evalTarea1UI <- function(id) {
         )
       ),
       mainPanel(
+        style = "overflow-y:scroll; max-height: 600px; position:relative;",
           uiOutput(ns("elegir_alumno")),
         tabsetPanel(type = "pills",
           tabPanel(
@@ -48,13 +49,16 @@ evalTarea1UI <- function(id) {
             uiOutput(ns("tabla_aliEstrategico"))
           ),
           tabPanel(
-            title = "Alineamiento específico"
+            title = "Alineamiento específico",
+            uiOutput(ns("tabla_aliEspecifico"))
           ),
           tabPanel(
-            title = "Monitoreo del PEI"
+            title = "Monitoreo del PEI",
+            uiOutput(ns("tabla_monitoreoPEI"))
           ),
           tabPanel(
-            title = "Evaluación del PEI"
+            title = "Evaluación del PEI",
+            uiOutput(ns("tabla_evaluacionPEI"))
           )
         )
       )
@@ -78,9 +82,29 @@ evalTarea1Server <- function(id, choices_alumnos){
       read_csv(paste0(file, ".csv"))
     })
     
+    data_aliEspecifico <- reactive({
+      file1 <- file.path("data", "tarea1", "aliEspecifico", alumno_elegido())
+      file2 <- paste0("data/tarea1/data_aliEst/", alumno_elegido(), ".csv")
+      data1 <- read_csv(paste0(file1, ".csv"))
+      data2 <- read_csv(file2)
+      
+      left_join(data1, data2) %>% 
+        select(`Objetivo Estratégico`, `Objetivos Específicos`, Metas, Año, Componente)
+    })
+    
+    data_monitoreoPEI <- reactive({
+      file <- paste0("data/tarea1/monitoreoPEI/", alumno_elegido(), ".csv")
+      read_csv(file)
+    })
+    
+    data_evaluacionPEI <- reactive({
+      file <- paste0("data/tarea1/evaluacionPEI/", alumno_elegido(), ".csv")
+      read_csv(file)
+    })
+    
     output$tabla_aliEstrategico <- renderUI({
       color_matriz <- data_aliEstrategico() %>% left_join(color_table, by = c("Componente"="componente"))
-      
+      columnas_color <- c("Componente", "Identidad Institucional", "Objetivo Estratégico")
       data_aliEstrategico() %>%
         flextable() %>%
         autofit() %>%
@@ -88,12 +112,76 @@ evalTarea1Server <- function(id, choices_alumnos){
         theme_vanilla() %>%
         fontsize(size = 15, part = "body") %>%
         fontsize(size = 16, part = "header") %>% 
-        color(j = "Componente", color = scales::col_factor(color_matriz$color2, levels = color_matriz$Componente)) %>%
-        bg(j = "Componente", bg = scales::col_factor(color_matriz$bg, levels = color_matriz$Componente)) %>% 
-        color(j = "Identidad Institucional", color = scales::col_factor(color_matriz$color2, levels = color_matriz$`Identidad Institucional`)) %>%
-        bg(j = "Identidad Institucional", bg = scales::col_factor(color_matriz$bg, levels = color_matriz$`Identidad Institucional`)) %>% 
-        color(j = "Objetivo Estratégico", color = scales::col_factor(color_matriz$color2, levels = color_matriz$`Objetivo Estratégico`)) %>%
-        bg(j = "Objetivo Estratégico", bg = scales::col_factor(color_matriz$bg, levels = color_matriz$`Objetivo Estratégico`)) %>% 
+        color(j = columnas_color, 
+              color = scales::col_factor(color_matriz$color2, levels = color_matriz$Componente), 
+              source = "Componente") %>%
+        bg(j = columnas_color, 
+           bg = scales::col_factor(color_matriz$bg, levels = color_matriz$Componente),
+           source = "Componente") %>% 
+        htmltools_value()
+    })
+    
+    output$tabla_aliEspecifico <- renderUI({
+      color_matriz <- data_aliEspecifico() %>% left_join(color_table, by = c("Componente"="componente"))
+      columnas_color <- c("Objetivo Estratégico", "Objetivos Específicos", "Metas", "Año")
+      
+      data_aliEspecifico() %>% 
+        select(-Componente) %>% 
+        flextable() %>% 
+        autofit() %>%
+        merge_v(c("Objetivo Estratégico", "Objetivos Específicos")) %>%
+        theme_vanilla() %>%
+        fontsize(size = 15, part = "body") %>%
+        fontsize(size = 16, part = "header") %>% 
+        color(j = columnas_color, 
+              color = scales::col_factor(color_matriz$color2, levels = color_matriz$`Objetivos Específicos`), 
+              source = "Objetivos Específicos") %>%
+        bg(j = columnas_color, 
+           bg = scales::col_factor(color_matriz$bg, levels = color_matriz$`Objetivos Específicos`),
+           source = "Objetivos Específicos") %>% 
+        htmltools_value()
+    })
+    
+    output$tabla_monitoreoPEI <- renderUI({
+      color_matriz <- data_monitoreoPEI() %>% left_join(color_table, by = c("Componente"="componente"))
+      columnas_color <- data_monitoreoPEI() %>% select(-Componente) %>% names()
+        
+      data_monitoreoPEI() %>% 
+        select(-Componente) %>% 
+        flextable() %>% 
+        autofit() %>%
+        merge_v(c("Objetivos Específicos")) %>%
+        theme_vanilla() %>%
+        fontsize(size = 15, part = "body") %>%
+        fontsize(size = 16, part = "header") %>% 
+        color(j = columnas_color, 
+              color = scales::col_factor(color_matriz$color2, levels = color_matriz$`Objetivos Específicos`), 
+              source = "Objetivos Específicos") %>%
+        bg(j = columnas_color, 
+           bg = scales::col_factor(color_matriz$bg, levels = color_matriz$`Objetivos Específicos`),
+           source = "Objetivos Específicos") %>% 
+        htmltools_value()
+    })
+    
+    output$tabla_evaluacionPEI <- renderUI({
+      color_matriz <- data_evaluacionPEI() %>% left_join(color_table, by = c("Componente"="componente"))
+      columnas_color <- data_evaluacionPEI() %>% select(-Componente) %>% names()
+      
+      data_evaluacionPEI() %>% 
+        select(-Componente) %>% 
+        flextable() %>% 
+        theme_vanilla() %>%
+        fontsize(size = 15, part = "body") %>%
+        fontsize(size = 16, part = "header") %>% 
+        merge_v(c("Descripción de cumplimiento de objetivos específicos",
+                  "Determinación de avance de los objetivos estratégicos",
+                  "Descripción de la evaluación institucional")) %>% 
+        color(j = columnas_color, 
+              color = scales::col_factor(color_matriz$color2, levels = color_matriz$`Descripción del estado de avance`), 
+              source = "Descripción del estado de avance") %>%
+        bg(j = columnas_color, 
+           bg = scales::col_factor(color_matriz$bg, levels = color_matriz$`Descripción del estado de avance`), 
+           source = "Descripción del estado de avance") %>% 
         htmltools_value()
     })
     
@@ -126,7 +214,20 @@ evalTarea1Server <- function(id, choices_alumnos){
                     "Descripción de la evaluación institucional"))
     })
     
-    guardarTablaServer("guardar", data = data_aliEstrategico, nombre_carpeta = "evalTarea1", nombre_usuario = alumno_elegido)
+    data_guardar <- reactive({
+      tibble(nombre_alumno = alumno_elegido(),
+             rubrica1 = paste(input$rubrica1, collapse = ", "),
+             cal_rubrica1 = length(input$rubrica1) + 1,
+             rubrica2 = paste(input$rubrica2, collapse = ", "),
+             cal_rubrica2 = length(input$rubrica2) + 1,
+             rubrica3 = paste(input$rubrica3, collapse = ", "),
+             cal_rubrica3 = length(input$rubrica3) + 1,
+             rubrica4 = paste(input$rubrica4, collapse = ", "),
+             cal_rubrica4 = length(input$rubrica4) + 1,
+             total = cal_rubrica1+cal_rubrica2+cal_rubrica3+cal_rubrica4)
+    })
+    
+    guardarTablaServer("guardar", data = data_guardar, nombre_carpeta = "evalTarea1", nombre_usuario = alumno_elegido)
   })
 }
 

@@ -11,3 +11,9 @@ pendientes
 - asegurar que los valores sean del mismo color que la formacion integral
 - es posible combinar componentes de GI y GA en un obj estrategico
 - poner color de fondo distinto por grupo de componentes
+
+22/12/2020
+- quitar los valores institucionales de la tabla
+- la mision tiene más de un oest vinculado (3)
+- incluir indicaciones para las tareas
+- tercer usuario? para que los directores puedan usar todas los campos de llenado

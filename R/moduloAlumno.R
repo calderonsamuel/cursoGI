@@ -10,6 +10,7 @@ moduloAlumnoUI <- function(id) {
         ),
       
       "Modulo I: Proyecto Educativo Institucional",
+      "",
       tabPanel(
         title = "Video 1: Evaluación del PEI",
         video1UI("video1")
@@ -25,18 +26,22 @@ moduloAlumnoUI <- function(id) {
             aliEstrategicoUI(ns("aliestrategico"))
           ),
           tabPanel(
-            title = "Alineamiento específico"
+            title = "Alineamiento específico",
+            aliEspecificoUI(ns("aliespecifico"))
           ),
           tabPanel(
-            title = "Monitoreo del PEI"
+            title = "Monitoreo del PEI",
+            monitoreoPEI_UI(ns("monitoreoPEI"))
           ),
           tabPanel(
-            title = "Evaluación del PEI"
+            title = "Evaluación del PEI",
+            evaluacionPEI_UI(ns("evaluacionPEI"))
           )
         )
       ),
       
       "Modulo II: Manual de Perfil de Puesto",
+      "",
       tabPanel(
         title = "Video 2: Evaluación del MPP",
         video2UI("video2")
@@ -60,6 +65,7 @@ moduloAlumnoUI <- function(id) {
       ),
       
       "Modulo III: Plan Anual de Trabajo",
+      "",
       tabPanel(
         title = "Video 3: Evaluación del PAT alineado",
         video3UI("video3")
@@ -113,21 +119,26 @@ moduloAlumnoUI <- function(id) {
     )
 }
 
-moduloAlumnoServer <- function(id) {
+moduloAlumnoServer <- function(id, nombre_usuario) {
   moduleServer(id, function(input, output, session) {
     video1Server("video1")
     video2Server("video2")
     video3Server("video3")
-    aliEstrategicoServer("aliestrategico")
+    aliEstrategicoServer("aliestrategico", nombre_usuario)
+    aliEspecificoServer("aliespecifico", nombre_usuario)
+    monitoreoPEI_Server("monitoreoPEI", nombre_usuario)
+    evaluacionPEI_Server("evaluacionPEI", nombre_usuario)
   })
 }
 
 moduloAlumnoApp <- function(){
   ui <- fluidPage(
+    # theme = bs_theme(version = 3, bootswatch = "flatly"),
     moduloAlumnoUI("myTestId")
   )
   server <- function(input, output, session) {
-    moduloAlumnoServer("myTestId")
+    nombre_usuario <- reactive("alumno1")
+    moduloAlumnoServer("myTestId", nombre_usuario)
   }
   shinyApp(ui, server)
 }
