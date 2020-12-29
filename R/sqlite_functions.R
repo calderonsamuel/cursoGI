@@ -11,7 +11,7 @@
   # filter(tiempo_vuelo < 230) %>% 
   # show_query()
 
-conn <- dbConnect(RSQLite::SQLite(), "data/cursoGI.db")
+# conn <- dbConnect(RSQLite::SQLite(), "data/cursoGI.db")
 
 # dbWriteTable(conn, "vuelos", flights)
 # 

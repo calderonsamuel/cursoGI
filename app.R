@@ -4,18 +4,16 @@ library(shinymanager)
 library(flextable)
 library(bslib)
 
-# my_theme <- bs_theme(bootswatch = "minty")
-my_theme <- bs_theme(bootswatch = "flatly", version = 3)
+# my_theme <- bs_theme(bootswatch = "journal", version = 3)
+# sass::sass(my_theme, output = "www/mytheme.css")
 
 creds <- read_csv("data/credentials.csv")
 
 ui <- fluidPage(
   navbarPage(
     title = "Curso de Gestión Institucional",
-    theme = shinythemes::shinytheme("journal"),
-    # theme = bs_theme(version = 3, bootswatch = "flatly"),
-    # theme = my_theme,
-    # shinythemes::themeSelector(),
+    # theme = shinythemes::shinytheme("journal"),
+    theme = "mytheme.css",
     tabPanel(
       title = "Inicio",
       bienvenidaUI("bienvenida")
@@ -27,7 +25,9 @@ ui <- fluidPage(
   )
 )
 
-ui <- secure_app(ui)
+# ui <- secure_app(ui, theme = shinythemes::shinytheme("journal"))
+ui <- secure_app(ui, theme = "mytheme.css")
+# ui <- secure_app(ui)
 
 server <- function(input, output) {
   
