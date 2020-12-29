@@ -1,6 +1,6 @@
 {
   "R": {
-    "Version": "4.0.2",
+    "Version": "4.0.3",
     "Repositories": [
       {
         "Name": "CRAN",
@@ -160,8 +160,8 @@
       "Package": "bslib",
       "Version": "0.2.3.9000",
       "Source": "GitHub",
-      "Remotes": "rstudio/thematic, rstudio/promises, rstudio/sass,\nrstudio/htmltools, rstudio/shiny",
       "RemoteType": "github",
+      "Remotes": "rstudio/thematic, rstudio/promises, rstudio/sass, rstudio/htmltools,\nrstudio/shiny",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "bslib",
       "RemoteUsername": "rstudio",

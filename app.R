@@ -25,9 +25,7 @@ ui <- fluidPage(
   )
 )
 
-# ui <- secure_app(ui, theme = shinythemes::shinytheme("journal"))
 ui <- secure_app(ui, theme = "mytheme.css")
-# ui <- secure_app(ui)
 
 server <- function(input, output) {
   
